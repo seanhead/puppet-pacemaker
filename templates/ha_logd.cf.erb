@@ -1,0 +1,7 @@
+# file managed by puppet
+
+logfacility  <%= logfacility %>
+logfile      <%= logfile %>
+<% if has_variable?('debugfile') and debugfile != '' %>
+debugfile    <%= debugfile %>
+<% end %>

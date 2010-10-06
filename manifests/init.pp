@@ -17,7 +17,7 @@ define ha::authkey($method, $key="") {
 
 define ha::node($autojoin="any", $use_logd="on", $compression="bz2",
                 $keepalive="1", $warntime="5", $deadtime="10", $initdead="60", $authkey,
-                $alert_email_address) {
+                $alert_email_address, $logfacility='none', $logfile='/var/log/ha-log', $debugfile='', $debuglevel='0') {
 
     Augeas { context => "/files/etc/ha.d/ha.cf" }
 
@@ -77,13 +77,16 @@ define ha::node($autojoin="any", $use_logd="on", $compression="bz2",
             mode   => 0600;
 
         # logd config, it's very simple and can be the same everywhere
+        "/etc/ha.d/ha_logd.cf":
+            ensure   => present,
+            mode     => 0444,
+            owner    => "root",
+            group    => "root",
+            content  => template('ha/ha_logd.cf.erb');
         "/etc/logd.cf":
-            ensure => present,
-            mode   => 0440,
-            owner  => "root",
-            group  => "root",
-            source => "puppet:///ha/etc/logd.cf";
-        
+            ensure   => link,
+            target   => 'ha.d/ha_logd.cf';
+
         # Augeas lenses
         "/usr/share/augeas/lenses/hacf.aug":
             ensure => present,
@@ -106,6 +109,9 @@ define ha::node($autojoin="any", $use_logd="on", $compression="bz2",
         "Setting /files/etc/ha.d/ha.cf/autojoin":
             notify  => Exec["restart-email"],
             changes => "set autojoin ${autojoin}";
+        "Setting /files/etc/ha.d/ha.cf/debug":
+            notify  => Exec["restart-email"],
+            changes => "set debug ${debuglevel}";
         "Setting /files/etc/ha.d/ha.cf/use_logd":
             notify  => Exec["restart-email"],
             changes => "set use_logd ${use_logd}";
