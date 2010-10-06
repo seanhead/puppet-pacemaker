@@ -29,10 +29,10 @@ define ha::node($autojoin="any", $use_logd="on", $compression="bz2",
                 5: {
                     package {
                         "pacemaker":
-                            ensure  => "1.0.4-23.1",
+                            ensure  => "latest",
                             require => Package["heartbeat"];
                         "heartbeat":
-                            ensure => "2.99.2-8.1";
+                            ensure => "latest";
                     }
                 }
             }
@@ -40,10 +40,10 @@ define ha::node($autojoin="any", $use_logd="on", $compression="bz2",
         Debian,Ubuntu: {
             package {
                 "pacemaker":
-                    ensure  => "1.0.4-1.1anchor",
+                    ensure  => "latest",
                     require => Package["heartbeat"];
                 "heartbeat":
-                    ensure => "2.99.2+sles11r9-1.1anchor";
+                    ensure => "latest";
                 "openais":
                     ensure => purged;
             }
