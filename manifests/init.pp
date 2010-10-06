@@ -1,4 +1,4 @@
-import "primitive.pp"
+import "crm/primitive.pp"
 import "stonith.pp"
 import "ip.pp"
 
