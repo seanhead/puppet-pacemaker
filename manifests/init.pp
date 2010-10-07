@@ -15,13 +15,14 @@ define ha::authkey($method, $key="") {
     }
 }
 
-define ha::node($autojoin="any", $use_logd="on", $compression="bz2",
+define ha::node($autojoin="any", $nodes=[], $use_logd="on", $compression="bz2",
                 $keepalive="1", $warntime="5", $deadtime="10", $initdead="60", $authkey,
                 $alert_email_address, $logfacility='none', $logfile='/var/log/ha-log', $debugfile='', $debuglevel='0') {
 
     Augeas { context => "/files/etc/ha.d/ha.cf" }
 
     $email_content = "Heartbeat config on ${fqdn} has changed."
+    $joined_nodes = join_array_with_spaces($nodes)
 
     case $operatingsystem {
         RedHat,CentOS: {
@@ -158,6 +159,10 @@ define ha::node($autojoin="any", $use_logd="on", $compression="bz2",
             require => File["/etc/ha.d/ha.cf"],
             notify  => Exec["restart-email"],
             changes => "set crm respawn";
+        "Setting /files/etc/ha.d/ha.cf/node":
+            require => File["/etc/ha.d/ha.cf"],
+            notify  => Exec["restart-email"],
+            changes => $joined_nodes ? { '' => "rm node", default => "set node '${joined_nodes}" };
         "Setting /files/etc/ha.d/authkeys/auth":
             context => "/files/etc/ha.d/authkeys",
             changes => "set auth ${authkey}",
@@ -187,5 +192,23 @@ define ha::mcast($group, $port=694, $ttl=1) {
     augeas { "Disable broadcast on ${name}":
         context => "/files/etc/ha.d/ha.cf",
         changes => "rm bcast"
+    }
+}
+
+define ha::ucast($directives) {
+    # This only works if the ucast nodes are at the end of the file
+    # Need a better way to detect if the current setting is already set
+    # but "onlyif" doesn't lend too much support to our cause
+    augeas { "Configure unicast nodes on ${name}":
+        context => "/files/etc/ha.d/ha.cf",
+        changes => ['rm ucast', augeas_array_to_changes('ucast', $directives)],
+    }
+
+    augeas { "Disable broadcast and multicast on ${name}":
+        context => "/files/etc/ha.d/ha.cf",
+        changes => [
+            'rm bcast',
+            'rm mcast',
+        ],
     }
 }
