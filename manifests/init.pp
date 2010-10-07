@@ -157,7 +157,7 @@ define ha::node($autojoin="any", $use_logd="on", $compression="bz2",
         "Setting /files/etc/ha.d/ha.cf/crm":
             require => File["/etc/ha.d/ha.cf"],
             notify  => Exec["restart-email"],
-            changes => "set crm yes";
+            changes => "set crm respawn";
         "Setting /files/etc/ha.d/authkeys/auth":
             context => "/files/etc/ha.d/authkeys",
             changes => "set auth ${authkey}",
