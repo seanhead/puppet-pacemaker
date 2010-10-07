@@ -76,6 +76,17 @@ define ha::node($autojoin="any", $use_logd="on", $compression="bz2",
             ensure => present,
             mode   => 0600;
 
+        # ha.cf, only if it doesn't already exist
+        # augeas will control settings, this just ensures that everything gets
+        # initialized in the right order
+        "/etc/ha.d/ha.cf":
+            ensure   => present,
+            replace  => false,
+            mode     => 0644,
+            owner    => "root",
+            group    => "root",
+            source   => "puppet:///modules/ha/etc/ha.d/ha.cf";
+
         # logd config, it's very simple and can be the same everywhere
         "/etc/ha.d/ha_logd.cf":
             ensure   => present,
@@ -104,36 +115,47 @@ define ha::node($autojoin="any", $use_logd="on", $compression="bz2",
 
     augeas {
         "Setting /files/etc/ha.d/ha.cf/port":
+            require => File["/etc/ha.d/ha.cf"],
             notify  => Exec["restart-email"],
             changes => "set udpport 694";
         "Setting /files/etc/ha.d/ha.cf/autojoin":
+            require => File["/etc/ha.d/ha.cf"],
             notify  => Exec["restart-email"],
             changes => "set autojoin ${autojoin}";
         "Setting /files/etc/ha.d/ha.cf/debug":
+            require => File["/etc/ha.d/ha.cf"],
             notify  => Exec["restart-email"],
             changes => "set debug ${debuglevel}";
         "Setting /files/etc/ha.d/ha.cf/use_logd":
+            require => File["/etc/ha.d/ha.cf"],
             notify  => Exec["restart-email"],
             changes => "set use_logd ${use_logd}";
         "Setting /files/etc/ha.d/ha.cf/traditional_compression":
+            require => File["/etc/ha.d/ha.cf"],
             notify  => Exec["restart-email"],
             changes => "set traditional_compression off";
         "Setting /files/etc/ha.d/ha.cf/compression":
+            require => File["/etc/ha.d/ha.cf"],
             notify  => Exec["restart-email"],
             changes => "set compression ${compression}";
         "Setting /files/etc/ha.d/ha.cf/keepalive":
+            require => File["/etc/ha.d/ha.cf"],
             notify  => Exec["restart-email"],
             changes => "set keepalive ${keepalive}";
         "Setting /files/etc/ha.d/ha.cf/warntime":
+            require => File["/etc/ha.d/ha.cf"],
             notify  => Exec["restart-email"],
             changes => "set warntime ${warntime}";
         "Setting /files/etc/ha.d/ha.cf/deadtime":
+            require => File["/etc/ha.d/ha.cf"],
             notify  => Exec["restart-email"],
             changes => "set deadtime ${deadtime}";
         "Setting /files/etc/ha.d/ha.cf/initdead":
+            require => File["/etc/ha.d/ha.cf"],
             notify  => Exec["restart-email"],
             changes => "set initdead ${initdead}";
         "Setting /files/etc/ha.d/ha.cf/crm":
+            require => File["/etc/ha.d/ha.cf"],
             notify  => Exec["restart-email"],
             changes => "set crm yes";
         "Setting /files/etc/ha.d/authkeys/auth":

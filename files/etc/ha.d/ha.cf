@@ -1,0 +1,24 @@
+# file managed by puppet
+
+# Logging (see ha-logd.cf)
+debug        0
+use_logd     on
+
+# Misc Options
+traditional_compression  off
+compression              bz2
+coredumps                true
+
+# Thresholds (in seconds)
+keepalive    1
+warntime     5
+deadtime     10
+initdead     60
+
+# use heartbeat v2/pacemaker
+crm respawn
+
+# Communications
+udpport      694
+autojoin     any
+
