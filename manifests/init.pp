@@ -90,7 +90,7 @@ define ha::node($autojoin="any", $use_logd="on", $compression="bz2",
         # logd config, it's very simple and can be the same everywhere
         "/etc/ha.d/ha_logd.cf":
             ensure   => present,
-            mode     => 0444,
+            mode     => 0644,
             owner    => "root",
             group    => "root",
             content  => template('ha/ha_logd.cf.erb');
@@ -101,16 +101,16 @@ define ha::node($autojoin="any", $use_logd="on", $compression="bz2",
         # Augeas lenses
         "/usr/share/augeas/lenses/hacf.aug":
             ensure => present,
-            mode   => 0444,
+            mode   => 0644,
             owner  => "root",
             group  => "root",
-            source => "puppet:///ha/usr/share/augeas/lenses/hacf.aug";
+            source => "puppet:///modules/ha/usr/share/augeas/lenses/hacf.aug";
         "/usr/share/augeas/lenses/haauthkeys.aug":
             ensure => present,
-            mode   => 0444,
+            mode   => 0644,
             owner  => "root",
             group  => "root",
-            source => "puppet:///ha/usr/share/augeas/lenses/haauthkeys.aug";
+            source => "puppet:///modules/ha/usr/share/augeas/lenses/haauthkeys.aug";
     }
 
     augeas {
@@ -183,7 +183,7 @@ define ha::mcast($group, $port=694, $ttl=1) {
                    ],
         onlyif  => "match mcast/interface[.='${name}'] size == 0",
     }
-    
+
     augeas { "Disable broadcast on ${name}":
         context => "/files/etc/ha.d/ha.cf",
         changes => "rm bcast"
