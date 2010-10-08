@@ -12,7 +12,7 @@ Puppet::Type.newtype(:ha_crm_parameter) do
 		isnamevar
 	end
 
-	newparam(:name) do
+	newparam(:key) do
 		desc "The name of the parameter"
 	end
 

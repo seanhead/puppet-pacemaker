@@ -6,17 +6,17 @@ Puppet::Type.type(:ha_crm_parameter).provide(:crm) do
 
 	def create
 		if resource[:meta] == :true
-			crm_resource "-m", "-r", resource[:resource], "-p", resource[:name], "-v", resource[:value]
+			crm_resource "-m", "-r", resource[:resource], "-p", resource[:key], "-v", resource[:value]
 		else
-			crm_resource "-r", resource[:resource], "-p", resource[:name], "-v", resource[:value]
+			crm_resource "-r", resource[:resource], "-p", resource[:key], "-v", resource[:value]
 		end
 	end
 
 	def destroy
 		if resource[:meta] == :true
-			crm_resource "-m", "-r", resource[:resource], "-d", resource[:name]
+			crm_resource "-m", "-r", resource[:resource], "-d", resource[:key]
 		else
-			crm_resource "-r", resource[:resource], "-d", resource[:name]
+			crm_resource "-r", resource[:resource], "-d", resource[:key]
 		end
 	end
 
@@ -31,9 +31,9 @@ Puppet::Type.type(:ha_crm_parameter).provide(:crm) do
 				type = "instance"
 			end
 			# Someone with some XPath skills can probably make this more efficient
-			nvpair = REXML::XPath.first(cib, "//primitive[@id='#{resource[:resource]}']/#{type}_attributes/nvpair[@name='#{resource[:name]}']")
-			nvpair = REXML::XPath.first(cib, "//master[@id='#{resource[:resource]}']/#{type}_attributes/nvpair[@name='#{resource[:name]}']") if nvpair.nil?
-			nvpair = REXML::XPath.first(cib, "//clone[@id='#{resource[:resource]}']/#{type}_attributes/nvpair[@name='#{resource[:name]}']") if nvpair.nil?
+			nvpair = REXML::XPath.first(cib, "//primitive[@id='#{resource[:resource]}']/#{type}_attributes/nvpair[@name='#{resource[:key]}']")
+			nvpair = REXML::XPath.first(cib, "//master[@id='#{resource[:resource]}']/#{type}_attributes/nvpair[@name='#{resource[:key]}']") if nvpair.nil?
+			nvpair = REXML::XPath.first(cib, "//clone[@id='#{resource[:resource]}']/#{type}_attributes/nvpair[@name='#{resource[:key]}']") if nvpair.nil?
 			if nvpair.nil?
 				false
 			else

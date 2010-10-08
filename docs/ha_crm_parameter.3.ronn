@@ -5,7 +5,7 @@ ha_crm_parameter(3) - Manage resource (meta-)?parmeters
 
     ha_crm_parameter { "<unique string>":
         resource       => "<resource name>",
-        name           => "<parameter name>",
+        key            => "<parameter name>",
         value          => "<parameter value>",
         meta           => "(true|false)",
         ensure         => "(present|absent)",
@@ -26,7 +26,7 @@ they control.
 
     Allowed values: `.*`
 
-  * `name`:
+  * `key`:
     The name of the parameter that you wish to manage.
 
     Allowed values: `.*`
@@ -64,7 +64,7 @@ they control.
 Set the "ip" parameter on the "test-ip" resource:
     ha_crm_parameter { "test-ip_ip":
         resource => "test-ip",
-        name     => "ip",
+        key      => "ip",
         value    => "192.168.100.1",
         ensure   => present,
     }
@@ -72,7 +72,7 @@ Set the "ip" parameter on the "test-ip" resource:
 Set the "priority" metaparameter on the "test-ip" resource:
     ha_crm_parameter { "test-ip_priority":
         resource => "test-ip",
-        name     => "priority",
+        key      => "priority",
         value    => "1000",
         meta     => true,
         ensure   => present,
