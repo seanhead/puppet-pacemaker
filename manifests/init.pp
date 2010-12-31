@@ -24,17 +24,29 @@ define ha::node($autojoin="any", $nodes=[], $use_logd="on", $compression="bz2",
 
     $email_content = "Heartbeat config on ${fqdn} has changed."
     $joined_nodes = join_array_with_spaces($nodes)
+    $email_bin = $operatingsystem ? {
+        Debian => "/usr/bin/mail",
+        Ubuntu => "/usr/bin/mail",
+        default => "/bin/mail"
+    }
 
     case $operatingsystem {
         RedHat,CentOS: {
             case $lsbmajdistrelease {
                 5: {
                     package {
+                        # Force x86_64 installation when running x64 as by default it pulls both and has a dependency on 32 bit perl
                         "pacemaker":
-                            ensure  => "latest",
+                            name => $architecture ? {
+                                x86_64 => "pacemaker.x86_64",
+                                default => "pacemaker",
+                            },
+                            ensure  => "1.0.10-1.4.el5",
                             require => Package["heartbeat"];
                         "heartbeat":
-                            ensure => "latest";
+                          # dependency on our yum::centos::five::clusterlabs class here
+                            require => Yumrepo["clusterlabs"],
+                            ensure => "3.0.3-2.3.el5";
                     }
                 }
             }
@@ -97,18 +109,12 @@ define ha::node($autojoin="any", $nodes=[], $use_logd="on", $compression="bz2",
             group    => "root",
             content  => template('ha/ha_logd.cf.erb');
         "/etc/logd.cf":
-<<<<<<< HEAD
-            ensure   => link,
-            target   => 'ha.d/ha_logd.cf';
-
-=======
             ensure => present,
             mode   => 0440,
             owner  => "root",
             group  => "root",
             source => "puppet:///modules/ha/etc/logd.cf";
         
->>>>>>> minor updates to init.pp - missing comma + imports
         # Augeas lenses
         "/usr/share/augeas/lenses/hacf.aug":
             ensure => present,
@@ -182,7 +188,7 @@ define ha::node($autojoin="any", $nodes=[], $use_logd="on", $compression="bz2",
 
     exec { "Send restart email":
         alias       => "restart-email",
-        command     => "/bin/echo \"${email_content}\" | /usr/bin/mail -s \"Heartbeat restart required\" ${alert_email_address}",
+        command     => "/bin/echo \"${email_content}\" | $email_bin -s \"Heartbeat restart required\" ${alert_email_address}",
         refreshonly => true,
     }
 }
