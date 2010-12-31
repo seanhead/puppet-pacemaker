@@ -41,7 +41,8 @@ define ha::node($autojoin="any", $nodes=[], $use_logd="on", $compression="bz2",
                                 x86_64 => "pacemaker.x86_64",
                                 default => "pacemaker",
                             },
-                            ensure  => "1.0.10-1.4.el5",
+                            # Can't lock version and specify architecture currently - see bug #2662
+                          #  ensure  => "1.0.10-1.4.el5",
                             require => Package["heartbeat"];
                         "heartbeat":
                           # dependency on our yum::centos::five::clusterlabs class here
