@@ -1,4 +1,4 @@
-import "crm/primitive.pp"
+import "crm/*.pp"
 import "stonith.pp"
 import "ip.pp"
 
@@ -97,9 +97,18 @@ define ha::node($autojoin="any", $nodes=[], $use_logd="on", $compression="bz2",
             group    => "root",
             content  => template('ha/ha_logd.cf.erb');
         "/etc/logd.cf":
+<<<<<<< HEAD
             ensure   => link,
             target   => 'ha.d/ha_logd.cf';
 
+=======
+            ensure => present,
+            mode   => 0440,
+            owner  => "root",
+            group  => "root",
+            source => "puppet:///modules/ha/etc/logd.cf";
+        
+>>>>>>> minor updates to init.pp - missing comma + imports
         # Augeas lenses
         "/usr/share/augeas/lenses/hacf.aug":
             ensure => present,
