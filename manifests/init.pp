@@ -1,4 +1,4 @@
-import "crm/*.pp"
+import "crm/primitive.pp"
 import "stonith.pp"
 import "ip.pp"
 
@@ -41,13 +41,13 @@ define ha::node($autojoin="any", $nodes=[], $use_logd="on", $compression="bz2",
                                 x86_64 => "pacemaker.x86_64",
                                 default => "pacemaker",
                             },
-                            # Can't lock version and specify architecture currently - see bug #2662
-                          #  ensure  => "1.0.10-1.4.el5",
+                            # Can't lock version and specify architecture currently - see bug #2662 - also, don't really want puppet upgrading a live cluster
+                            ensure  => "installed",
                             require => Package["heartbeat"];
                         "heartbeat":
                           # dependency on our yum::centos::five::clusterlabs class here
                             require => Yumrepo["clusterlabs"],
-                            ensure => "3.0.3-2.3.el5";
+                            ensure => "installed";
                     }
                 }
             }
@@ -55,10 +55,10 @@ define ha::node($autojoin="any", $nodes=[], $use_logd="on", $compression="bz2",
         Debian,Ubuntu: {
             package {
                 "pacemaker":
-                    ensure  => "latest",
+                    ensure  => "installed",
                     require => Package["heartbeat"];
                 "heartbeat":
-                    ensure => "latest";
+                    ensure => "installed";
                 "openais":
                     ensure => purged;
             }
@@ -110,12 +110,9 @@ define ha::node($autojoin="any", $nodes=[], $use_logd="on", $compression="bz2",
             group    => "root",
             content  => template('ha/ha_logd.cf.erb');
         "/etc/logd.cf":
-            ensure => present,
-            mode   => 0440,
-            owner  => "root",
-            group  => "root",
-            source => "puppet:///modules/ha/etc/logd.cf";
-        
+            ensure   => link,
+            target   => 'ha.d/ha_logd.cf';
+
         # Augeas lenses
         "/usr/share/augeas/lenses/hacf.aug":
             ensure => present,
@@ -231,5 +228,23 @@ define ha::ucast($directives) {
             'rm mcast',
         ],
         require => File["/etc/ha.d/ha.cf"],
+    }
+}
+
+define ha::ucast($directives) {
+    # This only works if the ucast nodes are at the end of the file
+    # Need a better way to detect if the current setting is already set
+    # but "onlyif" doesn't lend too much support to our cause
+    augeas { "Configure unicast nodes on ${name}":
+        context => "/files/etc/ha.d/ha.cf",
+        changes => ['rm ucast', augeas_array_to_changes('ucast', $directives)],
+    }
+
+    augeas { "Disable broadcast and multicast on ${name}":
+        context => "/files/etc/ha.d/ha.cf",
+        changes => [
+            'rm bcast',
+            'rm mcast',
+        ],
     }
 }
