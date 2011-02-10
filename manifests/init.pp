@@ -12,6 +12,7 @@ define ha::authkey($method, $key="") {
     augeas { "Setting /etc/ha.d/authkeys/${name}":
         changes => $changes,
         context => "/files/etc/ha.d/authkeys",
+        require => File["/etc/ha.d/authkeys"],
     }
 }
 
@@ -187,11 +188,13 @@ define ha::mcast($group, $port=694, $ttl=1) {
                     "set mcast[last()]/ttl ${ttl}",
                    ],
         onlyif  => "match mcast/interface[.='${name}'] size == 0",
+        require => File["/etc/ha.d/ha.cf"],
     }
 
     augeas { "Disable broadcast on ${name}":
         context => "/files/etc/ha.d/ha.cf",
-        changes => "rm bcast"
+        changes => "rm bcast",
+        require => File["/etc/ha.d/ha.cf"],
     }
 }
 
@@ -202,6 +205,7 @@ define ha::ucast($directives) {
     augeas { "Configure unicast nodes on ${name}":
         context => "/files/etc/ha.d/ha.cf",
         changes => ['rm ucast', augeas_array_to_changes('ucast', $directives)],
+        require => File["/etc/ha.d/ha.cf"],
     }
 
     augeas { "Disable broadcast and multicast on ${name}":
@@ -210,5 +214,6 @@ define ha::ucast($directives) {
             'rm bcast',
             'rm mcast',
         ],
+        require => File["/etc/ha.d/ha.cf"],
     }
 }
