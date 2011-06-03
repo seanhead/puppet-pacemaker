@@ -1,5 +1,5 @@
 define ha::crm::property($value, $ensure=present) {
-    if($ha_cluster_dc == $fqdn) {
+    if($ha_cluster_dc == $hostname) or ($ha_cluster_dc == $fqdn) {
         if($ensure == absent) {
             exec { "Deleting CRM property ${name}":
                 command => "/usr/sbin/crm_attribute -t crm_config -n ${name} -D",

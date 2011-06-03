@@ -15,7 +15,7 @@ Puppet::Type.type(:ha_crm_primitive).provide(:crm) do
 	end
 
 	def exists?
-		if resource[:only_run_on_dc] and Facter.value(:ha_cluster_dc) != Facter.value(:fqdn)
+		if resource[:only_run_on_dc] and ( Facter.value(:ha_cluster_dc) != Facter.value(:fqdn) or Facter.value(:ha_cluster_dc) != Facter.value(:hostname))
 			resource[:ensure] == :present ? true : false
 		else
 			cib = REXML::Document.new File.open("/var/lib/heartbeat/crm/cib.xml")
@@ -24,8 +24,8 @@ Puppet::Type.type(:ha_crm_primitive).provide(:crm) do
 		end
 	end
 
-	def priority
-		if resource[:only_run_on_dc] and Facter.value(:ha_cluster_dc) != Facter.value(:fqdn)
+	d.f priority
+		if resource[:only_run_on_dc] and ( Facter.value(:ha_cluster_dc) != Facter.value(:fqdn) or Facter.value(:ha_cluster_dc) != Facter.value(:hostname))
 			resource[:priority]
 		else
 			cib = REXML::Document.new File.open("/var/lib/heartbeat/crm/cib.xml")
@@ -47,7 +47,7 @@ Puppet::Type.type(:ha_crm_primitive).provide(:crm) do
 	end
 
 	def target_role
-		if resource[:only_run_on_dc] and Facter.value(:ha_cluster_dc) != Facter.value(:fqdn)
+		if resource[:only_run_on_dc] and ( Facter.value(:ha_cluster_dc) != Facter.value(:fqdn) or Facter.value(:ha_cluster_dc) != Facter.value(:hostname)) 
 			resource[:target_role]
 		else
 			cib = REXML::Document.new File.open("/var/lib/heartbeat/crm/cib.xml")
@@ -69,7 +69,7 @@ Puppet::Type.type(:ha_crm_primitive).provide(:crm) do
 	end
 
 	def is_managed
-		if resource[:only_run_on_dc] and Facter.value(:ha_cluster_dc) != Facter.value(:fqdn)
+		if resource[:only_run_on_dc] and ( Facter.value(:ha_cluster_dc) != Facter.value(:fqdn) or Facter.value(:ha_cluster_dc) != Facter.value(:hostname)) 
 			resource[:is_managed]
 		else
 			cib = REXML::Document.new File.open("/var/lib/heartbeat/crm/cib.xml")
@@ -91,7 +91,7 @@ Puppet::Type.type(:ha_crm_primitive).provide(:crm) do
 	end
 
 	def resource_stickiness
-		if resource[:only_run_on_dc] and Facter.value(:ha_cluster_dc) != Facter.value(:fqdn)
+		if resource[:only_run_on_dc] and ( Facter.value(:ha_cluster_dc) != Facter.value(:fqdn) or Facter.value(:ha_cluster_dc) != Facter.value(:hostname)) 
 			resource[:resource_stickiness]
 		else
 			cib = REXML::Document.new File.open("/var/lib/heartbeat/crm/cib.xml")
@@ -113,7 +113,7 @@ Puppet::Type.type(:ha_crm_primitive).provide(:crm) do
 	end
 
 	def migration_threshold
-		if resource[:only_run_on_dc] and Facter.value(:ha_cluster_dc) != Facter.value(:fqdn)
+		if resource[:only_run_on_dc] and ( Facter.value(:ha_cluster_dc) != Facter.value(:fqdn) or Facter.value(:ha_cluster_dc) != Facter.value(:hostname))
 			resource[:migration_threshold]
 		else
 			cib = REXML::Document.new File.open("/var/lib/heartbeat/crm/cib.xml")
@@ -135,7 +135,7 @@ Puppet::Type.type(:ha_crm_primitive).provide(:crm) do
 	end
 
 	def failure_timeout
-		if resource[:only_run_on_dc] and Facter.value(:ha_cluster_dc) != Facter.value(:fqdn)
+		if resource[:only_run_on_dc] and ( Facter.value(:ha_cluster_dc) != Facter.value(:fqdn) or Facter.value(:ha_cluster_dc) != Facter.value(:hostname)) 
 			resource[:failure_timeout]
 		else
 			cib = REXML::Document.new File.open("/var/lib/heartbeat/crm/cib.xml")
@@ -157,7 +157,7 @@ Puppet::Type.type(:ha_crm_primitive).provide(:crm) do
 	end
 
 	def multiple_active
-		if resource[:only_run_on_dc] and Facter.value(:ha_cluster_dc) != Facter.value(:fqdn)
+		if resource[:only_run_on_dc] and ( Facter.value(:ha_cluster_dc) != Facter.value(:fqdn) or Facter.value(:ha_cluster_dc) != Facter.value(:hostname)) 
 			resource[:multiple_active]
 		else
 			cib = REXML::Document.new File.open("/var/lib/heartbeat/crm/cib.xml")

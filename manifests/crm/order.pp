@@ -1,5 +1,5 @@
 define ha::crm::order($score, $first_name, $first_action="", $then_name, $then_action="", $ensure = present) {
-	if($ha_cluster_dc == $fqdn) {
+	if($ha_cluster_dc == $hostname) or ($ha_cluster_dc == $fqdn) {
 		if($first_action != "") {
 			$first = "${first_name}:${first_action}"
 		} else {

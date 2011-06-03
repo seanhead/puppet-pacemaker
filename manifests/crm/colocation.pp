@@ -1,5 +1,5 @@
 define ha::crm::colocation($score, $resource1_name, $resource1_role = "", $resource2_name, $resource2_role = "", $ensure = present) {
-	if($ha_cluster_dc == $fqdn) {
+	if($ha_cluster_dc == $hostname) or ($ha_cluster_dc == $fqdn) {
 		if($resource1_role != "") {
 			$resource1 = "${resource1_name}:${resource1_role}"
 		} else {

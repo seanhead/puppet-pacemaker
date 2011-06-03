@@ -1,5 +1,5 @@
 define ha::crm::metaparameter($resource, $parameter, $value, $ensure=present, $ignore_dc="false") {
-    if($ha_cluster_dc == $fqdn) or ($ignore_dc == "true") {
+    if($ha_cluster_dc == $hostname) or ($ha_cluster_dc == $fqdn) or ($ignore_dc == "true") {
         if($ensure == absent) {
             exec { "Removing ${parameter} from ${resource}":
                 command => "/usr/sbin/crm_resource --meta -r ${resource} -d ${parameter}",

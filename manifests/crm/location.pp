@@ -12,7 +12,7 @@ define ha::crm::location($ensure=present, $resource, $score, $rule = '', $host =
 		$loc = "rule ${score}: ${rule}"
 	}
 	
-	if($ha_cluster_dc == $fqdn) or ($ignore_dc == "true") {
+	if($ha_cluster_dc == $hostname) or ($ha_cluster_dc == $fqdn) or ($ignore_dc == "true") {
 		if($ensure == absent) {
 			exec { "Removing location rule ${name}":
 				command => "/usr/sbin/crm configure location delete ${name}",

@@ -1,5 +1,5 @@
 define ha::crm::ms($primitive, $master_max, $master_node_max, $clone_max, $clone_node_max, $ha_notify) {
-    if($ha_cluster_dc == $fqdn) {
+    if($ha_cluster_dc == $hostname) or ($ha_cluster_dc == $fqdn) or ($ignore_dc == "true") {
         exec { "Creating master ${name} for primitive ${primitive}":
             command => "/usr/sbin/crm configure ms ${name} ${primitive}",
             unless  => "/usr/sbin/crm_resource -r ${name} -q > /dev/null 2>&1",

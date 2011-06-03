@@ -40,7 +40,7 @@ define ha::crm::clone($resource, $clone_max="", $clone_node_max="", $globally_un
         fail("Invalid is_managed passed to ${clone_name}: Value must be either true or false")
     }
 
-    if($ha_cluster_dc == $fqdn) or ($ignore_dc == "true") {
+    if($ha_cluster_dc == $hostname) or ($ha_cluster_dc == $fqdn) or ($ignore_dc == "true") {
         if($ensure == absent) {
             exec { "Deleting clone ${name}":
                 command => "/usr/sbin/crm configure delete ${name}",
@@ -53,7 +53,7 @@ define ha::crm::clone($resource, $clone_max="", $clone_node_max="", $globally_un
                 alias   => "clone-${name}",
             }
 
-            ha::metaparameter { 
+            ha::crm::metaparameter { 
                 "${name}-clone-max":
                     resource  => $name,
                     parameter => "clone-max",

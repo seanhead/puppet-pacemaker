@@ -19,7 +19,7 @@ Puppet::Type.type(:ha_crm_location).provide(:crm) do
 	end
 
 	def exists?
-		if resource[:only_run_on_dc] and Facter.value(:ha_cluster_dc) != Facter.value(:fqdn)
+		if resource[:only_run_on_dc] and ( Facter.value(:ha_cluster_dc) != Facter.value(:fqdn) or Facter.value(:ha_cluster_dc) != Facter.value(:hostname)) 
       resource[:ensure] == :present ? true : false
 		else
 			cib = REXML::Document.new File.open("/var/lib/heartbeat/crm/cib.xml")

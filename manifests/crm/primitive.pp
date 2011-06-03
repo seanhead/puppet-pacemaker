@@ -32,7 +32,7 @@ define ha::crm::primitive($resource_type, $ensure=present, $monitor_interval, $i
         fail("Invalid multiple_active passed to ${primitive_name}: Value must be either block, stop_only or stop_start")
     }
 
-    if($ha_cluster_dc == $fqdn) or ($ignore_dc == "true") {
+    if($ha_cluster_dc == $hostname) or ($ha_cluster_dc == $fqdn) or ($ignore_dc == "true") {
         if($ensure == absent) {
             exec { "Removing primitive ${name}":
                 command => "/usr/sbin/crm_resource -D -r ${name} -t primitive",
