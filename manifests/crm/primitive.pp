@@ -40,7 +40,7 @@ define ha::crm::primitive($resource_type, $ensure=present, $monitor_interval, $i
             }
         } else {
             exec { "Creating primitive ${name}":
-                command => "/usr/sbin/crm configure primitive ${name} ${resource_type} op monitor interval=\"${monitor_interval}\"",
+                command => "/usr/sbin/crm --force configure primitive ${name} ${resource_type} op monitor interval=\"${monitor_interval}\"",
                 unless  => "/usr/sbin/crm_resource -r ${name} -t primitive -q > /dev/null 2>&1",
             }
 
