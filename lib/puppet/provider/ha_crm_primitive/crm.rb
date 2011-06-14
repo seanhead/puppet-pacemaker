@@ -24,7 +24,7 @@ Puppet::Type.type(:ha_crm_primitive).provide(:crm) do
 		end
 	end
 
-	d.f priority
+	def priority
 		if resource[:only_run_on_dc] and ( Facter.value(:ha_cluster_dc) != Facter.value(:fqdn) or Facter.value(:ha_cluster_dc) != Facter.value(:hostname))
 			resource[:priority]
 		else
